@@ -1,0 +1,51 @@
+#!/sbin/openrc-run
+
+description="Bluetooth mesh service"
+description_start="Starting Bluetooth mesh service"
+description_stop="Stopping Bluetooth mesh service"
+
+DAEMON=/usr/libexec/bluetooth/bluetooth-meshd
+PIDFILE=/run/bluetooth-meshd.pid
+
+depend() {
+    need dbus
+    after bootmisc
+}
+
+start_pre() {
+    # Check if the required directory exists
+    if [ ! -d /sys/class/bluetooth ]; then
+        eerror "/sys/class/bluetooth directory does not exist"
+        return 1
+    fi
+
+    # Exit if the daemon is not installed
+    if [ ! -x "${DAEMON}" ]; then
+        eerror "Daemon ${DAEMON} not installed or not executable"
+        return 1
+    fi
+}
+
+start() {
+    ebegin "${description_start}"
+    start-stop-daemon --start --quiet --background --make-pidfile --pidfile ${PIDFILE} --exec ${DAEMON} \
+        -- ${DAEMON_OPTS}
+    eend $?
+}
+
+stop() {
+    ebegin "${description_stop}"
+    start-stop-daemon --stop --quiet --pidfile ${PIDFILE}
+    eend $?
+}
+
+status() {
+    status_of_proc -p ${PIDFILE} ${DAEMON} && return 0 || return $?
+}
+
+restart() {
+    ebegin "Restarting Bluetooth mesh service"
+    stop
+    start
+    eend $?
+}

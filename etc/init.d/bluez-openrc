@@ -1,0 +1,105 @@
+#!/sbin/openrc-run
+
+description="Start Bluetooth daemons"
+description_start="Starting Bluetooth daemons"
+description_stop="Stopping Bluetooth daemons"
+
+DAEMON=/usr/sbin/bluetoothd
+HCIATTACH=/usr/bin/hciattach
+SDPTOOL=/usr/bin/sdptool
+
+HID2HCI_ENABLED=1
+HID2HCI_UNDO=1
+NOPLUGIN_OPTION=""
+SSD_OPTIONS="--oknodo --quiet --exec $DAEMON -- $NOPLUGIN_OPTION"
+
+depend() {
+    need mountall
+    need dbus
+    after bootmisc
+}
+
+start_pre() {
+    # Exit if the daemon is not installed
+    if [ ! -x "${DAEMON}" ]; then
+        eerror "Daemon ${DAEMON} not installed or not executable"
+        return 1
+    fi
+
+    # Read configuration variable file if it is present
+    if [ -r /etc/default/bluetooth ]; then
+        . /etc/default/bluetooth
+    fi
+
+    if [ -r /etc/default/rcS ]; then
+        . /etc/default/rcS
+    fi
+}
+
+start() {
+    ebegin "${description_start}"
+
+    if [ "${BLUETOOTH_ENABLED}" = 0 ]; then
+        eend 0 "Bluetooth is disabled. See /etc/default/bluetooth"
+        return 0
+    fi
+
+    start-stop-daemon --start --background ${SSD_OPTIONS}
+    run_sdptool
+
+    if [ "${HID2HCI_ENABLED}" = 1 ]; then
+        enable_hci_input
+    fi
+
+    eend $?
+}
+
+stop() {
+    ebegin "${description_stop}"
+
+    if [ "${BLUETOOTH_ENABLED}" = 0 ]; then
+        eend 0 "Bluetooth is disabled."
+        return 0
+    fi
+
+    if [ "${HID2HCI_UNDO}" = 1; then
+        disable_hci_input
+    fi
+
+    start-stop-daemon --stop ${SSD_OPTIONS}
+    eend $?
+}
+
+restart() {
+    ebegin "Restarting Bluetooth daemons"
+    stop
+    sleep 1
+    start
+    eend $?
+}
+
+status() {
+    status_of_proc "${DAEMON}" "${description}" && return 0 || return $?
+}
+
+run_sdptool() {
+    if [ -x "${SDPTOOL}" ] && [ -n "${SDPTOOL_OPTIONS}" ]; then
+        IFS=";"
+        for option in ${SDPTOOL_OPTIONS}; do
+            IFS=" "
+            if [ "${VERBOSE}" != "no" ]; then
+                ${SDPTOOL} ${option}
+            else
+                ${SDPTOOL} ${option} >/dev/null 2>&1
+            fi
+        done
+    fi
+}
+
+hci_input() {
+    ebegin "Switching to HID/HCI is no longer done in init script, see /usr/share/doc/bluez/NEWS.Debian.gz"
+    eend 0
+}
+
+alias enable_hci_input=hci_input
+alias disable_hci_input=hci_input

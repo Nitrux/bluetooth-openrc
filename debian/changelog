@@ -1,0 +1,5 @@
+bluetooth-openrc (0.0.1)  nitrux; urgency=medium
+
+  * Create package.
+
+ -- Uri Herrera <uri_herrera@nxos.org>  Sat, 29 Jun 2024 15:06:00 -0500
