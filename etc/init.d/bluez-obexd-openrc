@@ -1,8 +1,8 @@
 #!/sbin/openrc-run
 
-description="Bluetooth OBEX service"
-description_start="Starting Bluetooth OBEX service"
-description_stop="Stopping Bluetooth OBEX service"
+description="Bluetooth OBEX daemon"
+description_start="Starting Bluetooth OBEX daemon"
+description_stop="Stopping Bluetooth OBEX daemon"
 
 DAEMON=/usr/libexec/bluetooth/obexd
 PIDFILE=/run/obexd.pid
@@ -13,7 +13,7 @@ depend() {
 }
 
 start_pre() {
-    # Exit if the daemon is not installed
+
     if [ ! -x "${DAEMON}" ]; then
         eerror "Daemon ${DAEMON} not installed or not executable"
         return 1
