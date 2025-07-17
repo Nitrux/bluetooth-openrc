@@ -1,11 +1,3 @@
 #!/usr/bin/env bash
 
-# -- Add service to runlevel.
-
-rc-update add bluez-openrc async
-rc-update add bluez-obexd-openrc async
-rc-update add bluez-mesh-openrc async
-
-# -- Update services list.
-
-rc-update -u
+exit 0
