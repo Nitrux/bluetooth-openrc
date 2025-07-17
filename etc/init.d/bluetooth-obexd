@@ -1,0 +1,22 @@
+#!/sbin/openrc-run
+# Copyright (c) 2007-2021 The Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+description="Starts the Bluetooth OBEX daemon"
+command="/usr/libexec/bluetooth/obexd"
+pidfile="/run/obexd.pid"
+
+depend() {
+	# Needs the D-Bus message bus service
+	need dbus
+	# Needs the main bluetooth service to be running first
+	need bluetooth
+}
+
+start_pre() {
+	# This is a good check to ensure the daemon binary exists before trying to start it.
+	if [ ! -x "${command}" ]; then
+		eerror "${command} is not installed or not executable"
+		return 1
+	fi
+}
