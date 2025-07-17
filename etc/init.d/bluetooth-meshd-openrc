@@ -11,7 +11,7 @@ depend() {
 	# Needs the D-Bus message bus service
 	need dbus
 	# Needs the main bluetooth service to be running first
-	need bluetooth
+	need bluetooth-openrc
 }
 
 start_pre() {
