@@ -12,4 +12,5 @@ depend() {
 	# Should start after kernel modules are loaded to ensure
 	# Bluetooth hardware drivers are available.
 	after modules
+	provide bluetooth
 }
