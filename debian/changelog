@@ -1,3 +1,9 @@
+bluetooth-openrc (0.0.5)  nitrux; urgency=medium
+
+  * Fix provides, again.
+
+ -- Uri Herrera <uri_herrera@nxos.org>  Fri, 18 Jul 2025 20:07:00 -0500
+
 bluetooth-openrc (0.0.4)  nitrux; urgency=medium
 
   * Fix provides.
