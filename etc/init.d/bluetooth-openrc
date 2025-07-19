@@ -1,14 +1,11 @@
 #!/sbin/openrc-run
 
 description="Starts the Bluetooth daemon"
+supervisor="supervise-daemon"
 command="/usr/sbin/bluetoothd"
-pidfile="/run/bluetoothd.pid"
 
 depend() {
-	# Needs the D-Bus message bus service
 	need dbus localmount hostname
-	# Should start after kernel modules are loaded to ensure
-	# Bluetooth hardware drivers are available.
 	after modules
 	provide bluetooth
 }

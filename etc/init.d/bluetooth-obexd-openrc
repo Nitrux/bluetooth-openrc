@@ -1,18 +1,10 @@
 #!/sbin/openrc-run
 
 description="Starts the Bluetooth OBEX daemon"
+supervisor="supervise-daemon"
 command="/usr/libexec/bluetooth/obexd"
-pidfile="/run/bluetooth-obexd.pid"
 
 depend() {
 	need bluetooth
 	provide obexd
-}
-
-start_pre() {
-	# This is a good check to ensure the daemon binary exists before trying to start it.
-	if [ ! -x "${command}" ]; then
-		eerror "${command} is not installed or not executable"
-		return 1
-	fi
 }

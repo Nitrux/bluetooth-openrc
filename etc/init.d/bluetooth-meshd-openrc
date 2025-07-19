@@ -1,23 +1,10 @@
 #!/sbin/openrc-run
 
 description="Starts the Bluetooth Mesh daemon"
+supervisor="supervise-daemon"
 command="/usr/libexec/bluetooth/bluetooth-meshd"
-pidfile="/run/bluetooth-meshd.pid"
 
 depend() {
 	need bluetooth
 	provide meshd
-}
-
-start_pre() {
-	# These are good checks to ensure the system is ready for the daemon.
-	if [ ! -d /sys/class/bluetooth ]; then
-		eerror "Bluetooth hardware support not found (/sys/class/bluetooth)."
-		return 1
-	fi
-
-	if [ ! -x "${command}" ]; then
-		eerror "${command} is not installed or not executable."
-		return 1
-	fi
 }
