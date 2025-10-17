@@ -3,9 +3,25 @@
 description="Starts the Bluetooth daemon"
 supervisor="supervise-daemon"
 command="/usr/sbin/bluetoothd"
+command_args="-n"
 
 depend() {
-	need dbus localmount hostname
+	need dbus udev localmount hostname
 	after modules
 	provide bluetooth
+}
+
+start_post() {
+    if command -v btmgmt >/dev/null 2>&1; then
+        btmgmt --index 0 power on >/dev/null 2>&1 || true
+        return 0
+    fi
+    t0=$(date +%s); timeout=5
+    while :; do
+        dbus-send --system --print-reply --dest=org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus.ListNames 2>/dev/null | grep -q org.bluez && break
+        [ $(( $(date +%s) - t0 )) -ge $timeout ] && break
+        sleep 0.2
+    done
+    command -v bluetoothctl >/dev/null 2>&1 && bluetoothctl show | grep -q 'Powered: no' && bluetoothctl power on >/dev/null 2>&1 || true
+    return 0
 }
