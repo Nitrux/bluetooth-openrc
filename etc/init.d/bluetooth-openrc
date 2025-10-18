@@ -11,6 +11,12 @@ depend() {
 	provide bluetooth
 }
 
+start_pre() {
+    modprobe -r btusb >/dev/null 2>&1 || true
+    modprobe btusb >/dev/null 2>&1 || true
+    return 0
+}
+
 start_post() {
     if command -v btmgmt >/dev/null 2>&1; then
         btmgmt --index 0 power on >/dev/null 2>&1 || true
@@ -20,7 +26,6 @@ start_post() {
     while :; do
         dbus-send --system --print-reply --dest=org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus.ListNames 2>/dev/null | grep -q org.bluez && break
         [ $(( $(date +%s) - t0 )) -ge $timeout ] && break
-        sleep 0.2
     done
     command -v bluetoothctl >/dev/null 2>&1 && bluetoothctl show | grep -q 'Powered: no' && bluetoothctl power on >/dev/null 2>&1 || true
     return 0
