@@ -1,7 +1,7 @@
 #!/sbin/openrc-run
 
 description="Starts the Bluetooth OBEX daemon"
-supervisor="supervise-daemon"
+supervisor=supervise-daemon
 command="/usr/libexec/bluetooth/obexd"
 
 depend() {

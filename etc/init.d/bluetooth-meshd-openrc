@@ -1,7 +1,7 @@
 #!/sbin/openrc-run
 
 description="Starts the Bluetooth Mesh daemon"
-supervisor="supervise-daemon"
+supervisor=supervise-daemon
 command="/usr/libexec/bluetooth/bluetooth-meshd"
 
 depend() {
