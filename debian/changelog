@@ -1,3 +1,9 @@
+bluetooth-openrc (0.1.0)  nitrux; urgency=medium
+
+  * Remove bluetooth-obexd-openrc.
+
+ -- Uri Herrera <uri_herrera@nxos.org>  Thu, 25 Jun 2026 20:35:00 -0500
+
 bluetooth-openrc (0.0.9)  nitrux; urgency=medium
 
   * Unquote supervise-daemon use.
